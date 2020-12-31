@@ -4,27 +4,41 @@
     <!-- Alert -->
     <Alert :alert="alert" />
     <!-- Form -->
-    <form class="flex" @submit.prevent="addTodo()">
-      <input
-        v-model="inputTodo"
-        type="text"
-        class="font-medium text-sm md:text-base w-full rounded-l-md border-gray-300 shadow focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        placeholder="Add Todo"
+    <Form
+      @submit.prevent="addTodo()"
+      :validation-schema="validationSchema"
+      class="flex flex-col"
+    >
+      <div class="flex justify-between">
+        <Field
+          v-model="inputTodo"
+          id="todo"
+          name="Todo"
+          as="input"
+          type="text"
+          class="font-medium text-sm md:text-base w-full rounded-l-md border-gray-300 shadow focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          placeholder="Add Todo"
+        />
+        <button
+          type="submit"
+          class="px-2 md:px-3 shadow rounded-r-md bg-indigo-700 hover:bg-indigo-900 outline-none focus:outline-none"
+        >
+          <svg class="w-6 h-6 fill-current text-gray-100" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <ErrorMessage
+        v-if="true"
+        name="Todo"
+        class="font-medium text-sm md:text-base text-red-600"
       />
-      <button
-        type="submit"
-        class="px-2 md:px-3 shadow rounded-r-md bg-indigo-700 hover:bg-indigo-900 outline-none focus:outline-none"
-      >
-        <svg class="w-6 h-6 fill-current text-gray-100" stroke="currentColor">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-          ></path>
-        </svg>
-      </button>
-    </form>
+    </Form>
     <!-- Todo Lists -->
     <div
       class="mt-5 flex flex-col divide-y divide-indigo-300 max-h-80 overflow-y-auto rounded border border-indigo-300"
@@ -93,10 +107,15 @@
 import Alert from "@/components/Alert.vue"
 import { useStore } from "vuex"
 import { computed, ref } from "vue"
+import { Form, Field, ErrorMessage } from "vee-validate"
+import { object, string } from "yup"
 
 export default {
   components: {
-    Alert
+    Alert,
+    Form,
+    Field,
+    ErrorMessage
   },
   setup() {
     const store = useStore()
@@ -106,6 +125,10 @@ export default {
     store.dispatch("todos/fetchTodos")
 
     const inputTodo = ref("")
+
+    const validationSchema = object().shape({
+      Todo: string().required()
+    })
 
     const todos = computed(() => store.getters["todos/allTodos"])
 
@@ -126,6 +149,7 @@ export default {
 
     return {
       inputTodo,
+      validationSchema,
       todos,
       alert,
       addTodo,
