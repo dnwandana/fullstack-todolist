@@ -5,7 +5,7 @@
     <Alert :alert="alert" />
     <!-- Form -->
     <Form
-      @submit.prevent="addTodo()"
+      @submit="addTodo()"
       :validation-schema="validationSchema"
       class="flex flex-col"
     >
