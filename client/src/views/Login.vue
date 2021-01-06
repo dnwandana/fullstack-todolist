@@ -52,7 +52,7 @@
               id="password"
               name="Password"
               as="input"
-              :type="!user.showPassword ? 'password' : 'text'"
+              :type="!showPassword ? 'password' : 'text'"
               placeholder="Password"
               class="text-sm md:text-base w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             />
@@ -63,7 +63,7 @@
                 fill="none"
                 viewBox="0 0 24 24"
               >
-                <g v-if="!user.showPassword">
+                <g v-if="!showPassword">
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -116,9 +116,9 @@
 <script>
 import Alert from "@/components/Alert.vue"
 import { Form, Field, ErrorMessage } from "vee-validate"
-import { useStore } from "vuex"
-import { computed, reactive } from "vue"
 import { object, string } from "yup"
+import { computed, reactive, ref } from "vue"
+import { useStore } from "vuex"
 
 export default {
   components: {
@@ -134,9 +134,10 @@ export default {
 
     const user = reactive({
       username: "",
-      password: "",
-      showPassword: false
+      password: ""
     })
+
+    const showPassword = ref(false)
 
     const validationSchema = object().shape({
       Username: string()
@@ -150,15 +151,19 @@ export default {
 
     const alert = computed(() => store.getters.getAlert)
 
-    const viewPassword = () => (user.showPassword = !user.showPassword)
+    const viewPassword = () => (showPassword.value = !showPassword.value)
 
     const login = () => {
-      store.dispatch("user/login", user)
+      store.dispatch("user/login", {
+        username: user.username,
+        password: user.password
+      })
     }
 
     return {
       validationSchema,
       user,
+      showPassword,
       alert,
       viewPassword,
       login

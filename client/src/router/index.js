@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router"
-import Todos from "@/views/Todos.vue"
+import Home from "@/views/Home.vue"
 import store from "@/store"
 import nprogress from "nprogress"
 
 const routes = [
   {
     path: "/",
-    name: "Todos",
-    component: Todos,
+    name: "Home",
+    component: Home,
     meta: { requireAuth: true }
   },
   {

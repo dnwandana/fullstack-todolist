@@ -75,7 +75,7 @@
               id="password"
               name="Password"
               as="input"
-              :type="!user.showPassword ? 'password' : 'text'"
+              :type="!showPassword ? 'password' : 'text'"
               placeholder="Password"
               class="text-sm md:text-base w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             />
@@ -86,7 +86,7 @@
                 fill="none"
                 viewBox="0 0 24 24"
               >
-                <g v-if="!user.showPassword">
+                <g v-if="!showPassword">
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -131,7 +131,7 @@
               id="Confirmation"
               name="Confirmation"
               as="input"
-              :type="!user.showConfPassword ? 'password' : 'text'"
+              :type="!showConfPassword ? 'password' : 'text'"
               placeholder="Confirmation Password"
               class="text-sm md:text-base w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             />
@@ -142,7 +142,7 @@
                 fill="none"
                 viewBox="0 0 24 24"
               >
-                <g v-if="!user.showConfPassword">
+                <g v-if="!showConfPassword">
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -198,8 +198,8 @@
 import Alert from "@/components/Alert.vue"
 import { Form, Field, ErrorMessage } from "vee-validate"
 import { useStore } from "vuex"
-import { computed, reactive } from "vue"
-import { object, ref, string } from "yup"
+import { computed, reactive, ref } from "vue"
+import { object, ref as reference, string } from "yup"
 
 export default {
   components: {
@@ -217,10 +217,11 @@ export default {
       fullname: "",
       username: "",
       password: "",
-      showPassword: false,
-      confPassword: "",
-      showConfPassword: false
+      confPassword: ""
     })
+
+    const showPassword = ref(false)
+    const showConfPassword = ref(false)
 
     const validationSchema = object().shape({
       Fullname: string().required(),
@@ -234,14 +235,14 @@ export default {
       Confirmation: string()
         .min(6)
         .required()
-        .oneOf([ref("Password")], "Confirmation Password do not match")
+        .oneOf([reference("Password")], "Confirmation Password do not match")
     })
 
     const alert = computed(() => store.getters.getAlert)
 
-    const viewPassword = () => (user.showPassword = !user.showPassword)
+    const viewPassword = () => (showPassword.value = !showPassword.value)
     const viewConfPassword = () =>
-      (user.showConfPassword = !user.showConfPassword)
+      (showConfPassword.value = !showConfPassword.value)
 
     const register = () => {
       store.dispatch("user/register", {
@@ -254,6 +255,8 @@ export default {
     return {
       validationSchema,
       user,
+      showPassword,
+      showConfPassword,
       alert,
       viewPassword,
       viewConfPassword,

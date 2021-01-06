@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import Navigation from "@/components/Navigation.vue"
+import Navigation from "@/components/layout/Navigation.vue"
 import { useStore } from "vuex"
 import { computed } from "vue"
 
